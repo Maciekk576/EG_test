@@ -91,10 +91,6 @@ plot(time, time_coeffs, type = "l")
 # korelacje 
 # OLS
 
-library(gplots)
-plotmeans(valence ~ country, main="Heterogeineity across countries", data=Panel)
-
-
 
 
 
