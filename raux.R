@@ -6,7 +6,7 @@ library(gplots)
 library(plm)
 
 # set wd
-data_long <- load("C:/Users/macie/OneDrive/Pulpit/EG_test/Spotify_long.RData")
+load("C:/Users/macie/OneDrive/Pulpit/EG_test/Spotify_long.RData")
 data_long$country <- as.factor(data_long$country)
 # View(data)
 
@@ -91,9 +91,33 @@ plot(time, time_coeffs, type = "l")
 # korelacje 
 # OLS
 
+load("C:/Users/macie/OneDrive/Pulpit/EG_test/macro.rdata")
+View(macro)
+
+data2 <- merge(data_long, macro)#, by.x = "country", by.y = "country")
+data2
+# View(data2)
+write.csv(data2, file = "data2.csv")
+
+##############################
+data2$month = data2$time + (data2$time> 12)*-12
+
+Panel = data2
+fixed_only_time_squares <- lm(valence ~ temperature + temperature^2 + sky + sky^2 + factor(month) - 1, data=Panel)
+fixed_twoway_squares <-lm(valence ~ temperature + temperature^2 + sky + sky^2 +  factor(country) + factor(month) - 1, data=Panel)
+
+summary(fixed_only_time_squares)
+summary(fixed_twoway_squares)
 
 
+fixed_only_time_squares$coefficients[3:14]
 
+# fixed time effects w modelu one-way
+time_coeffs <- as.numeric(fixed_only_time_squares$coefficients[3:14])
+time <- seq(1,12)
+plot(time, time_coeffs, type = "l")
 
-
-
+# fixed time effects w modelu two-way
+time_coeffs <- as.numeric(fixed_twoway_squares$coefficients[28:38])
+time <- seq(1,11)
+plot(time, time_coeffs, type = "l")
